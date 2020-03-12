@@ -3,28 +3,22 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
 pub struct BodyRenderData {
-    pub x: f32
+    pub x: f64,
+    pub y: f64,
+    pub radius: f64
 }
 
 pub struct RenderData {
     pub bodies: Vec<BodyRenderData>
 }
 
-#[wasm_bindgen]
 pub struct Renderer {
-
+    context: web_sys::CanvasRenderingContext2d
 }
 
-#[wasm_bindgen]
 impl Renderer {
-    #[wasm_bindgen]
     pub fn new() -> Renderer {
-        Renderer {}
-    }
-
-    #[wasm_bindgen]
-    pub fn draw(&self) {
-        let document = web_sys::window().unwrap().document().unwrap();
+        let document: web_sys::Document = web_sys::window().unwrap().document().unwrap();
         let canvas = document.get_element_by_id("game-of-life-canvas").unwrap();
         let canvas: web_sys::HtmlCanvasElement = canvas
             .dyn_into::<web_sys::HtmlCanvasElement>()
@@ -38,29 +32,23 @@ impl Renderer {
             .dyn_into::<web_sys::CanvasRenderingContext2d>()
             .unwrap();
 
-        context.begin_path();
+        Renderer {
+            context
+        }
+    }
 
-        // Draw the outer circle.
-        context
-            .arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
-            .unwrap();
+    pub fn draw(&self, data: &RenderData) {
+        self.context.clear_rect(0., 0., 800., 800.);
 
-        // Draw the mouth.
-        context.move_to(110.0, 75.0);
-        context.arc(75.0, 75.0, 35.0, 0.0, f64::consts::PI).unwrap();
+        self.context.begin_path();
 
-        // Draw the left eye.
-        context.move_to(65.0, 65.0);
-        context
-            .arc(60.0, 65.0, 5.0, 0.0, f64::consts::PI * 2.0)
-            .unwrap();
+        for body in &data.bodies {
+            self.context
+                .arc(body.x, body.y, body.radius, 0., f64::consts::PI * 2.)
+                .unwrap();
+            self.context.close_path();
+        }
 
-        // Draw the right eye.
-        context.move_to(95.0, 65.0);
-        context
-            .arc(90.0, 65.0, 5.0, 0.0, f64::consts::PI * 2.0)
-            .unwrap();
-
-        context.stroke();
+        self.context.fill();
     }
 }
