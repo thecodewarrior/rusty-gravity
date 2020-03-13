@@ -1,4 +1,5 @@
 use wasm_bindgen::prelude::*;
+use std::ops::Range;
 
 #[wasm_bindgen]
 pub fn set_panic_hook() {
@@ -10,4 +11,14 @@ pub fn set_panic_hook() {
     // https://github.com/rustwasm/console_error_panic_hook#readme
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
+}
+
+pub trait IndicesHelper {
+    fn indices(&self) -> Range<usize>;
+}
+
+impl<T> IndicesHelper for Vec<T> {
+    fn indices(&self) -> Range<usize> {
+        0 .. self.len()
+    }
 }
