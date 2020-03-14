@@ -4,14 +4,11 @@ pub mod utils;
 pub mod math;
 pub mod sim;
 pub mod draw;
+pub mod ui;
 
+use gloo::{events::EventListener, timers::callback::Timeout};
 use wasm_bindgen::prelude::*;
-
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+use wasm_bindgen::JsCast;
 
 #[wasm_bindgen]
 pub struct Game {
@@ -23,9 +20,17 @@ pub struct Game {
 impl Game {
     #[wasm_bindgen]
     pub fn new() -> Game {
+        let document: web_sys::Document = web_sys::window().unwrap().document().unwrap();
+
+        let canvas = document.get_element_by_id("game-of-life-canvas").unwrap();
+        let canvas: web_sys::HtmlCanvasElement = canvas
+            .dyn_into::<web_sys::HtmlCanvasElement>()
+            .map_err(|_| ())
+            .unwrap();
+
         Game {
             universe: sim::Universe::new(),
-            renderer: draw::Renderer::new()
+            renderer: draw::Renderer::new(canvas)
         }
     }
 

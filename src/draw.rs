@@ -17,13 +17,7 @@ pub struct Renderer {
 }
 
 impl Renderer {
-    pub fn new() -> Renderer {
-        let document: web_sys::Document = web_sys::window().unwrap().document().unwrap();
-        let canvas = document.get_element_by_id("game-of-life-canvas").unwrap();
-        let canvas: web_sys::HtmlCanvasElement = canvas
-            .dyn_into::<web_sys::HtmlCanvasElement>()
-            .map_err(|_| ())
-            .unwrap();
+    pub fn new(canvas: web_sys::HtmlCanvasElement) -> Renderer {
 
         let context = canvas
             .get_context("2d")

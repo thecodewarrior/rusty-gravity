@@ -56,7 +56,7 @@ impl Universe {
                 .filter(|body| {
                     ((body.position - center) / (size/2)).length_sq() <= 1.
                 })
-                .take(10)
+                .take(20)
         )
             .collect();
 
@@ -69,14 +69,6 @@ impl Universe {
             let distance_sq = delta.length_sq();
 
             let mut lower_mass = central_mass;
-            // for j in bodies.indices() {
-            //     if j == i {
-            //         continue;
-            //     }
-            //     if (bodies[j].position - center).length_sq() <= distance_sq {
-            //         lower_mass += bodies[j].mass;
-            //     }
-            // }
 
             let speed = orbital_velocity(lower_mass, distance);
             let velocity = delta / distance * speed;
@@ -157,14 +149,14 @@ impl Universe {
             let mut body = body.unwrap();
 
             body.position += body.velocity;
-            if body.position.x < 0. || body.position.x > self.size.x as f64 {
-                body.velocity.x *= -0.5;
-                body.position.x = body.position.x.clamp(0., self.size.x as f64)
-            }
-            if body.position.y < 0. || body.position.y > self.size.y as f64 {
-                body.velocity.y *= -0.5;
-                body.position.y = body.position.y.clamp(0., self.size.y as f64)
-            }
+            // if body.position.x < 0. || body.position.x > self.size.x as f64 {
+            //     body.velocity.x *= -0.5;
+            //     body.position.x = body.position.x.clamp(0., self.size.x as f64)
+            // }
+            // if body.position.y < 0. || body.position.y > self.size.y as f64 {
+            //     body.velocity.y *= -0.5;
+            //     body.position.y = body.position.y.clamp(0., self.size.y as f64)
+            // }
 
             self.bodies[i] = Some(body);
         }
