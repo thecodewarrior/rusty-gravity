@@ -7,8 +7,10 @@ extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     pub fn log(message: &str);
 
-    #[wasm_bindgen(js_namespace = UIGlue, js_name = hook_event)]
+    #[wasm_bindgen(js_namespace = UIGlue, js_name = hook_event_direct)]
     fn hook_event_internal(target: &JsValue, event: &str, _fn: &str);
+    #[wasm_bindgen(js_namespace = UIGlue)]
+    pub fn hook_event(selector: &str, event: &str, _fn: &str);
 
     #[wasm_bindgen(js_namespace = UIGlue)]
     pub fn set_interval(_fn: &str, interval: u32) -> u32;
@@ -24,11 +26,6 @@ extern "C" {
     pub fn request_animation_frame(_fn: &str);
 }
 
-pub fn hook_event<T: AsRef<EventTarget>>(target: T, event: &str, _fn: &str) {
+pub fn hook_event_direct<T: AsRef<EventTarget>>(target: T, event: &str, _fn: &str) {
     hook_event_internal(target.as_ref().as_ref(), event, _fn);
-}
-
-pub fn hook_event_id(id: &str, event: &str, _fn: &str) {
-    let document: web_sys::Document = web_sys::window().unwrap().document().unwrap();
-    hook_event(document.get_element_by_id(id).unwrap(), event, _fn);
 }

@@ -31,7 +31,11 @@ features = [
   'Window',
   'EventListener',
   'EventTarget',
-  'MouseEvent'
+  'MouseEvent',
+  'KeyboardEvent',
+  'DragEvent',
+  'WheelEvent',
+  'InputEvent'
 ]
 
 [dev-dependencies]

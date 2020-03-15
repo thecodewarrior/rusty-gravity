@@ -3,7 +3,7 @@ use wasm_bindgen::JsCast;
 use std::rc::Rc;
 use std::cell::RefCell;
 use crate::ui_glue::*;
-use web_sys::{EventTarget, MouseEvent};
+use web_sys::{MouseEvent, KeyboardEvent};
 use crate::draw::Renderer;
 use crate::sim::Universe;
 
@@ -12,6 +12,7 @@ pub struct App {
     canvas: web_sys::HtmlCanvasElement,
     universe: Universe,
     renderer: Renderer,
+    sim_running: bool,
 }
 
 #[wasm_bindgen]
@@ -32,13 +33,15 @@ impl App {
         App {
             canvas,
             universe,
-            renderer
+            renderer,
+            sim_running: false
         }
     }
 
     #[wasm_bindgen]
     pub fn init(&self) {
-        hook_event_id("universe", "mousedown", "universe_mousedown");
+        hook_event("#universe", "mousedown", "universe_mousedown");
+        hook_event("body", "keydown", "body_keydown");
         request_animation_frame("frame");
     }
 
@@ -48,8 +51,17 @@ impl App {
     }
 
     #[wasm_bindgen]
+    pub fn body_keydown(&mut self, event: KeyboardEvent) {
+        if event.key() == String::from(" ") {
+            self.sim_running = !self.sim_running;
+        }
+    }
+
+    #[wasm_bindgen]
     pub fn frame(&mut self) {
-        self.universe.tick();
+        if self.sim_running {
+            self.universe.tick();
+        }
         let data = self.universe.render_data();
         self.renderer.draw(&data);
         request_animation_frame("frame");
